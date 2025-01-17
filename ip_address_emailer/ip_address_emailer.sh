@@ -26,9 +26,17 @@ email_ip() {
 }
 
 # main program
+ip_website=https://ipv4.icanhazip.com/
 last_ip=$(tail -n 1 server_ip.log | grep -E -o "(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}")
-current_ip=$(curl https://ipinfo.io/ip 2>/dev/null)
+current_ip=$(curl $ip_website 2>/dev/null | grep -E -o "(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}")
+
 log_current_ip
-if [ "$current_ip" != "$last_ip" ]; then
-  email_ip
+
+if [ -n "$current_ip" ]; then
+  if [ "$current_ip" != "$last_ip" ]; then
+    email_ip
+    # echo "would email $current_ip here."
+  fi
+else
+  echo_time "ERROR getting ip address from $ip_website" >> $log_file
 fi
