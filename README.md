@@ -9,8 +9,10 @@ This tool emails me the server's public ip address whenever it changes.
 ### Motivation
 Most residental modems are set up to change ip address upon reboot.
 This is a problem if I want to access my server via `ssh` at anytime, I have no guarantee that the ip I have for my server is correct.
-In order to circumvent this, the script at `ip_address_emailer.sh` will email my personal email address if the server's public ip differs from what it has stored within the log file.
-It will then be run on a set interval using `cron`.
+
+### How It Works
+In order to circumvent this problem, the script at `ip_address_emailer.sh` will email my personal email address if the server's public ip differs from what it has stored within the log file.
+It will then be run on a set interval using `crontab`.
 Currently this is every 5 minutes using the `crontab`: `*/5 * * * * cd /home/xavier/Git_Repos/xavier-server-tools/ip_address_emailer && ./ip_address_emailer.sh`
 
 
