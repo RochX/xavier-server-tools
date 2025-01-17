@@ -1,0 +1,6 @@
+# log files
+*.log
+# mail files
+*.mail
+# error files
+*.err
