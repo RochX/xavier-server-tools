@@ -7,11 +7,14 @@ count = 0
 # leads: what can be placed in the leads
 # num_leads: desired length
 def find_touches(curr_touch,leads,num_leads):
-  if len(curr_touch) > 0 and not prove_touch(curr_touch):
+  if len(curr_touch) > 0 and not prove_touch(curr_touch, allow_incomplete=True):
     return
 
-  if len(curr_touch) == num_leads or prove_touch(curr_touch):
+  if prove_touch(curr_touch):
     output_touch(curr_touch)
+    return
+
+  if len(curr_touch) == num_leads:
     return
 
   for l in leads:
@@ -21,10 +24,13 @@ def find_touches(curr_touch,leads,num_leads):
 def output_touch(touch):
   global count
   count += 1
-  print(count, touch, prove_touch(touch))
+  outstr = ','.join(touch)
+  with open("output.txt", "a") as f:
+    print(count, "Outputted to file.")
+    print(count, prove_touch(touch), f"Touch is {len(touch)*4} changes:", outstr, file=f)
 
 # returns if touch is true
-def prove_touch(touch):
+def prove_touch(touch, allow_incomplete=False):
   subprocess.run("cp template.siril titanic.siril", shell=True)
   subprocess.run(f"echo \"\nprove {','.join(touch)}\" >> titanic.siril", shell=True)
   completed = subprocess.run("gsiril < titanic.siril", shell=True, text=True, capture_output=True)
@@ -32,10 +38,11 @@ def prove_touch(touch):
   # print("Process output:", completed.stdout)
   # print("Process error:", completed.stderr)
 
-  return "Touch is true" in completed.stdout
+  return "Touch is true" in completed.stdout or (allow_incomplete and "Is this OK?" in completed.stdout)
 
 
 leads = ["pp","sp","ps","ss"]
 lead_length = 4
 
-find_touches([], leads, 5)
+subprocess.run("mv output.txt prev_output.txt", shell=True)
+find_touches([], leads, 30)
